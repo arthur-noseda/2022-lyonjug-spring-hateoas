@@ -1,0 +1,691 @@
+= Spring HATEOAS
+:source-highlighter: highlightjs
+:revealjs_customtheme: css/black-tweaked.css
+:imagesdir: assets
+
+[%notitle]
+== Tout commence par un besoin
+
+Tout commence par un besoin
+
+[%notitle]
+== Comment concevoir l'API RESTful d'un processus...
+
+Comment concevoir l'API RESTful d'un processus...
+
+[%notitle]
+== Sans que le client ne connaisse à l'avance les états et les transitions.
+
+Sans que le client ne connaisse à l'avance les états et les transitions.
+
+== Disclaimer
+
+Vous n'avez peut-être pas besoin de respecter les contraintes HATEOAS.
+
+[%notitle]
+=== REST APIs must be hypertext-driven
+
+[.stretch]
+image::1024/rest-apis-must-be-hypertext-driven.png[Selon Roy Fielding, les API REST doivent être pilotées par l'hypertexte]
+
+Source : https://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven
+
+[%notitle]
+=== REST APIs must be hypertext-driven
+
+[.stretch]
+image::1024/restistential-crisis-over-hypermedia-apis.png[RESTistential Crisis over Hypermedia APIs (InfoQ)]
+
+Source : https://www.infoq.com/news/2014/03/rest-at-odds-with-web-apis/
+
+[%notitle]
+=== Hacker News on HATEOAS
+
+[.stretch]
+image::1024/hacker-news-on-hateoas.png[Hacker News on HATEOAS (Hacker News)]
+
+[%notitle]
+=== Why the hypermedia model is inadequate for Computer-based instruction
+
+[.stretch]
+image::1024/hypermedia-model-inadequate-for-computer-based-instruction.png[Why the hypermedia model is inadequate for Computer-based instruction (ACM)]
+
+Source : https://dl.acm.org/doi/10.1145/290320.283101
+
+== RESTful Web APIs
+
+[.stretch]
+image::restful-web-apis.jpg[RESTful Web APIs]
+
+[%notitle]
+=== Richardon & Amundsen
+
+image:mugshot.jpg[alt=Leonard Richardson,width=200] image:mike-amundsen.png[alt=Mike Amundsen,width=200]
+
+https://www.crummy.com/[Richardson] & http://amundsen.com/[Amundsen]
+
+== REST in Practice
+
+[.stretch]
+image::rest-in-practice.jpg[REST in Practice]
+
+[%notitle]
+=== Webber, Parastatidis & Robinson
+
+image:jim-webber.png[alt=Jim Webber,width=200] image:Savas.jpg[alt=Savas Parastatidis,width=200]
+
+https://jimwebber.org/[Jim Webber], https://savas.me/[Savas Parastatidis] & Ian Robinson
+
+== Modèle de maturité de Richardson
+
+[.stretch]
+image::richardson-maturity-model.png[Modèle de maturité de Richardson]
+
+Source : https://martinfowler.com/articles/richardsonMaturityModel.html
+
+== An amazing technology stack
+
+[.stretch]
+image::2008-QCon-act3-img54.png[An amazing technology stack]
+
+La transcription du talk de 2008 à la QCon : https://www.crummy.com/writing/speaking/2008-QCon/
+
+[.notes]
+--
+Au moment de présenter "Justice Will Take Us Millions Of Intricate Moves", Richardson travaillait sur l'application Launchpad pour Canonical.
+--
+
+== Hypermedia ?
+
+[%notitle]
+== Définition
+
+[quote, Office québécois de la langue française]
+Système de présentation de l'information reposant sur des hyperliens qui permettent de passer d'un document multimédia à un autre.
+
+Source : https://gdt.oqlf.gouv.qc.ca/ficheOqlf.aspx?Id_Fiche=8385304
+
+== HATEOAS ?
+
+== Hypermedia As The Engine Of Application State
+
+[%notitle]
+== Définition d'HATEOAS
+
+L'état de la ressource détermine la liste des liens et fait partie de la représentation
+
+[%notitle]
+== Qui produit des API hypermedia ?
+
+Qui produit des API hypermedia ?
+
+[%notitle]
+== Producteurs d'hypermedia
+
+* Microsoft
+* Amazon
+* Drupal
+* ...
+
+[.notes]
+--
+* https://docs.aws.amazon.com/apigateway/api-reference/
+* https://docs.aws.amazon.com/apigateway/api-reference/link-relation/resource-create/
+--
+
+[%notitle]
+=== Amazon API Gateway
+
+image::amazon-api-gateway-01.png[Amazon API Gateway]
+
+[%notitle]
+=== Amazon API Gateway
+
+image::amazon-api-gateway-02.png[Amazon API Gateway]
+
+== Spring HATEOAS
+
+== The usual suspects
+image:oliver-drotbohm.jpg[alt=Oliver Drotbohm, width=200] image:greg-turnquist.jpg[alt=Greg Turnquist, width=200]
+
+https://odrotbohm.de/[Oliver Drotbohm] & http://gregturnquist.com/[Greg Turnquist]
+
+== Une longue incubation
+
+* *2000* - La dissertation de Roy Fielding
+* *2008* - Maturity Heuristic (Richardson)
+* *19/07/2012* - Spring HATEOAS 0.1.0.RELEASE
+* *30/09/2019* - Spring HATEOAS 1.0.0.RELEASE
+
+[.notes]
+--
+Le titre exact de la thèse de Roy Fielding : Architectural Styles and the Design of Network-based Software Architectures
+--
+
+== Mais un produit vivant
+
+image::gitk_spring-hateoas_1.2.0_1.5.0-M2.png[Export gitk]
+
+[%notitle]
+== Caractéristiques
+
+* Compatible avec Spring MVC et Spring WebFlux
+* i18n
+* Support de HAL, HAL-FORMS, Collection+JSON ALPS, UBER out of the box
+* Projets communautaires pour JSON:API et Siren
+
+[%notitle]
+=== start.spring.io
+
+[.stretch]
+image::start-spring-io-hateoas.png[start.spring.io > Spring HATEOAS]
+
+[%notitle]
+=== start.spring.io
+
+[.stretch]
+image::start-spring-io-rest-repositories.png[start.spring.io > Spring REST Repositories]
+
+[%notitle]
+=== start.spring.io
+
+[.stretch]
+image::start-spring-io-rest-docs.png[start.spring.io > Spring REST Docs]
+
+== Modèle de programmation
+
+* `EntityModel`
+* `CollectionModel`
+* `Link`
+* `Affordance`
+
+[%notitle]
+=== getTodos
+
+[source,java]
+----
+@GetMapping
+public CollectionModel<EntityModel<Todo>> getTodos() {
+  return CollectionModel.of(todoRepository.findAll().stream()
+      .map(t -> EntityModel.of(t,
+          linkTo(methodOn(TodoController.class)
+              .getTodo(t.getId())).withSelfRel()))
+      .collect(Collectors.toList()),
+          linkTo(methodOn(TodoController.class)
+              .getTodos()).withSelfRel());
+}
+----
+
+[%notitle]
+=== getTodo
+
+[source,java]
+----
+@GetMapping("/{id}")
+public EntityModel<Todo> getTodo(@PathVariable("id") UUID id) {
+  return todoRepository.findById(id)
+      .map(t -> EntityModel.of(t,
+          linkTo(methodOn(TodoController.class)
+              .getTodo(t.getId())).withSelfRel()))
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+}
+----
+
+== Quel media-type ?
+
+[%notitle]
+=== Quel media-type ?
+
+[.stretch]
+image::a317b41c8812b8ced683b44b1a95d6dd8915ddb2_semantic-rest-apis-formats-1.jpeg[Grille de choix de Fabernovel]
+
+Source : https://www.fabernovel.com/fr/article/tech/quelles-technologies-pour-faire-des-apis-hypermedia
+
+== Hypertext Application Language
+
+https://stateless.group/hal_specification.html
+
+IANA : `application/hal+json` et `application/hal+xml`
+
+[%notitle]
+=== HAL
+
+[.stretch]
+image::info-model.png[The HAL Model]
+
+Source : https://stateless.group/hal_specification.html
+
+[%notitle]
+=== HAL
+
+[source,json]
+----
+{
+  "_embedded" : {
+    "todos" : [ {
+      "id" : "5a1fed06-6e67-4c8c-8462-efca56ea3cf0",
+      "title" : "Go on a Treasure Hunt",
+      "completed" : false,
+      "_links" : {
+        "self" : {
+          "href" : "http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"
+        }
+      }
+    },
+    ... ]
+  },
+  "_links" : {
+    "self" : {
+      "href" : "http://localhost:8080/todos"
+    }
+  }
+}
+----
+
+////
+$ curl 'http://localhost:8080/todos' -i -X GET -H 'Accept: application/hal+json'
+HTTP/1.1 200
+Content-Type: application/hal+json
+Transfer-Encoding: chunked
+Date: Wed, 23 Feb 2022 23:35:10 GMT
+
+{
+  "_embedded" : {
+    "todos" : [ {
+      "id" : "5a1fed06-6e67-4c8c-8462-efca56ea3cf0",
+      "title" : "Go on a Treasure Hunt",
+      "completed" : false,
+      "_links" : {
+        "self" : {
+          "href" : "http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"
+        }
+      }
+    }, {
+      "id" : "724b6dc6-aa2a-4efc-be1b-1d1ab4c4b4b0",
+      "title" : "Pay Off Library Fee",
+      "completed" : true,
+      "_links" : {
+        "self" : {
+          "href" : "http://localhost:8080/todos/724b6dc6-aa2a-4efc-be1b-1d1ab4c4b4b0"
+        }
+      }
+    }, {
+      "id" : "71f235e3-541e-42bb-8241-7323fee4225d",
+      "title" : "Make Homemade Beer",
+      "completed" : false,
+      "_links" : {
+        "self" : {
+          "href" : "http://localhost:8080/todos/71f235e3-541e-42bb-8241-7323fee4225d"
+        }
+      }
+    } ]
+  },
+  "_links" : {
+    "self" : {
+      "href" : "http://localhost:8080/todos"
+    }
+  }
+}
+////
+
+[%notitle]
+=== HAL
+
+[source,json]
+----
+{
+  "id" : "5a1fed06-6e67-4c8c-8462-efca56ea3cf0",
+  "title" : "Go on a Treasure Hunt",
+  "completed" : false,
+  "_links" : {
+    "self" : {
+      "href" : "http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"
+    }
+  }
+}
+----
+
+////
+$ curl 'http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0' -i -X GET -H 'Accept: application/hal+json'
+HTTP/1.1 200
+Content-Type: application/hal+json
+Transfer-Encoding: chunked
+Date: Thu, 24 Feb 2022 08:05:22 GMT
+
+{
+  "id" : "5a1fed06-6e67-4c8c-8462-efca56ea3cf0",
+  "title" : "Go on a Treasure Hunt",
+  "completed" : false,
+  "_links" : {
+    "self" : {
+      "href" : "http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"
+    }
+  }
+}
+////
+
+== De la normalisation des relations
+
+[.stretch]
+image::1280/iana-link-registrations_1280.png[IANA Link Registrations]
+
+[%notitle]
+=== Définies en tant que constantes
+
+Définies en tant que constantes
+
+[.stretch]
+image::1024/iana-link-registrations_spring-hateoas_1024.png[IANA Link Registrations dans Spring HATEOAS]
+
+== HAL-FORMS
+
+https://rwcbook.github.io/hal-forms/
+
+IANA : `application/prs.hal-forms+json`
+
+[.notes]
+--
+`prs` signifie _personal_.
+--
+
+[%notitle]
+=== HAL-FORMS
+
+[source,json]
+----
+{
+  "_embedded" : {
+    "todos" : [ {
+      "id" : "5a1fed06-6e67-4c8c-8462-efca56ea3cf0",
+      "title" : "Go on a Treasure Hunt",
+      "completed" : false,
+      "_links" : {
+        "self" : {
+          "href" : "http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"
+        }
+      }
+    },
+    ... ]
+  },
+  "_links" : {
+    "self" : {
+      "href" : "http://localhost:8080/todos"
+    }
+  }
+}
+----
+
+////
+$ curl 'http://localhost:8080/todos' -i -X GET -H 'Accept: application/prs.hal-forms+json'
+HTTP/1.1 200
+Content-Type: application/prs.hal-forms+json
+Transfer-Encoding: chunked
+Date: Wed, 23 Feb 2022 23:36:31 GMT
+
+{
+  "_embedded" : {
+    "todos" : [ {
+      "id" : "5a1fed06-6e67-4c8c-8462-efca56ea3cf0",
+      "title" : "Go on a Treasure Hunt",
+      "completed" : false,
+      "_links" : {
+        "self" : {
+          "href" : "http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"
+        }
+      }
+    }, {
+      "id" : "724b6dc6-aa2a-4efc-be1b-1d1ab4c4b4b0",
+      "title" : "Pay Off Library Fee",
+      "completed" : true,
+      "_links" : {
+        "self" : {
+          "href" : "http://localhost:8080/todos/724b6dc6-aa2a-4efc-be1b-1d1ab4c4b4b0"
+        }
+      }
+    }, {
+      "id" : "71f235e3-541e-42bb-8241-7323fee4225d",
+      "title" : "Make Homemade Beer",
+      "completed" : false,
+      "_links" : {
+        "self" : {
+          "href" : "http://localhost:8080/todos/71f235e3-541e-42bb-8241-7323fee4225d"
+        }
+      }
+    } ]
+  },
+  "_links" : {
+    "self" : {
+      "href" : "http://localhost:8080/todos"
+    }
+  }
+}
+////
+
+[%notitle]
+=== HAL-FORMS
+
+[source,json]
+----
+{
+  "id" : "5a1fed06-6e67-4c8c-8462-efca56ea3cf0",
+  "title" : "Go on a Treasure Hunt",
+  "completed" : false,
+  "_links" : {
+    "self" : {
+      "href" : "http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"
+    }
+  }
+}
+----
+
+////
+$ curl 'http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0' -i -X GET -H 'Accept: application/prs.hal-forms+json'
+HTTP/1.1 200
+Content-Type: application/prs.hal-forms+json
+Transfer-Encoding: chunked
+Date: Thu, 24 Feb 2022 08:06:17 GMT
+
+{
+  "id" : "5a1fed06-6e67-4c8c-8462-efca56ea3cf0",
+  "title" : "Go on a Treasure Hunt",
+  "completed" : false,
+  "_links" : {
+    "self" : {
+      "href" : "http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"
+    }
+  }
+}
+////
+
+== Collection+JSON
+
+http://amundsen.com/media-types/collection/
+
+IANA : `application/vnd.collection+json`
+
+[.notes]
+--
+`vnd` signifie vendor.
+--
+
+[%notitle]
+=== Collection+JSON
+
+[source,json]
+----
+{
+  "links": [{ "rel": "self", "href": "http://localhost:8080/todos" }],
+  "content": [
+    {
+      "id": "5a1fed06-6e67-4c8c-8462-efca56ea3cf0",
+      "title": "Go on a Treasure Hunt",
+      "completed": false,
+      "links": [
+        {
+          "rel": "self",
+          "href": "http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"
+        }
+      ]
+    }, ...
+  ]
+}
+----
+
+////
+$ curl 'http://localhost:8080/todos' -i -X GET -H 'Accept: application/vnd.collection+json'
+HTTP/1.1 200
+Content-Type: application/vnd.collection+json
+Transfer-Encoding: chunked
+Date: Wed, 23 Feb 2022 23:33:56 GMT
+
+{"links":[{"rel":"self","href":"http://localhost:8080/todos"}],"content":[{"id":"5a1fed06-6e67-4c8c-8462-efca56ea3cf0","title":"Go on a Treasure Hunt","completed":false,"links":[{"rel":"self","href":"http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"}]},{"id":"724b6dc6-aa2a-4efc-be1b-1d1ab4c4b4b0","title":"Pay Off Library Fee","completed":true,"links":[{"rel":"self","href":"http://localhost:8080/todos/724b6dc6-aa2a-4efc-be1b-1d1ab4c4b4b0"}]},{"id":"71f235e3-541e-42bb-8241-7323fee4225d","title":"Make Homemade Beer","completed":false,"links":[{"rel":"self","href":"http://localhost:8080/todos/71f235e3-541e-42bb-8241-7323fee4225d"}]}]}
+////
+
+[%notitle]
+=== Collection+JSON
+
+[source,json]
+----
+{
+  "id": "5a1fed06-6e67-4c8c-8462-efca56ea3cf0",
+  "title": "Go on a Treasure Hunt",
+  "completed": false,
+  "links": [
+    {
+      "rel": "self",
+      "href": "http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"
+    }
+  ]
+}
+----
+
+////
+$ curl 'http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0' -i -X GET -H 'Accept: application/vnd.collection+json'
+HTTP/1.1 200
+Content-Type: application/vnd.collection+json
+Transfer-Encoding: chunked
+Date: Thu, 24 Feb 2022 07:35:22 GMT
+
+{"id":"5a1fed06-6e67-4c8c-8462-efca56ea3cf0","title":"Go on a Treasure Hunt","completed":false,"links":[{"rel":"self","href":"http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"}]}
+////
+
+== Siren
+
+https://github.com/kevinswiber/siren
+
+IANA : `application/vnd.siren+json`
+
+== Problem
+
+https://datatracker.ietf.org/doc/html/rfc7807
+
+IANA : `application/problem+json`
+
+== JSON-LD
+
+https://json-ld.org/
+
+IANA : `application/ld+json`
+
+== Hydra
+
+http://www.markus-lanthaler.com/hydra/
+
+Complète JSON-LD
+
+== UBER
+
+IANA : `application/vnd.amundsen-uber+json`
+
+[%notitle]
+=== UBER
+
+[source,json]
+----
+{
+  "uber": {
+    "version": "1.0",
+    "data": [
+      {
+        "name": "self",
+        "rel": ["self", "getTodos"],
+        "url": "http://localhost:8080/todos"
+      },
+      {
+        "data": [
+          {
+            "name": "self",
+            "rel": ["self", "getTodo"],
+            "url": "http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"
+          },
+          {
+            "name": "todo",
+            "data": [
+              { "name": "completed", "value": false },
+              { "name": "id", "value": "5a1fed06-6e67-4c8c-8462-efca56ea3cf0" },
+              { "name": "title", "value": "Go on a Treasure Hunt" }
+            ]
+          }
+        ]
+      },
+      ...
+    ]
+  }
+}
+----
+
+////
+$ curl 'http://localhost:8080/todos' -i -X GET -H 'Accept: application/vnd.amundsen-uber+json'
+HTTP/1.1 200
+Content-Type: application/vnd.amundsen-uber+json
+Transfer-Encoding: chunked
+Date: Thu, 24 Feb 2022 08:15:21 GMT
+
+{"uber":{"version":"1.0","data":[{"name":"self","rel":["self","getTodos"],"url":"http://localhost:8080/todos"},{"data":[{"name":"self","rel":["self","getTodo"],"url":"http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"},{"name":"todo","data":[{"name":"completed","value":false},{"name":"id","value":"5a1fed06-6e67-4c8c-8462-efca56ea3cf0"},{"name":"title","value":"Go on a Treasure Hunt"}]}]},{"data":[{"name":"self","rel":["self","getTodo"],"url":"http://localhost:8080/todos/724b6dc6-aa2a-4efc-be1b-1d1ab4c4b4b0"},{"name":"todo","data":[{"name":"completed","value":true},{"name":"id","value":"724b6dc6-aa2a-4efc-be1b-1d1ab4c4b4b0"},{"name":"title","value":"Pay Off Library Fee"}]}]},{"data":[{"name":"self","rel":["self","getTodo"],"url":"http://localhost:8080/todos/71f235e3-541e-42bb-8241-7323fee4225d"},{"name":"todo","data":[{"name":"completed","value":false},{"name":"id","value":"71f235e3-541e-42bb-8241-7323fee4225d"},{"name":"title","value":"Make Homemade Beer"}]}]}]}}
+////
+
+[%notitle]
+=== UBER
+
+[source,json]
+----
+{
+  "uber": {
+    "version": "1.0",
+    "data": [
+      {
+        "name": "self",
+        "rel": ["self", "getTodo"],
+        "url": "http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"
+      },
+      {
+        "name": "todo",
+        "data": [
+          { "name": "completed", "value": false },
+          { "name": "id", "value": "5a1fed06-6e67-4c8c-8462-efca56ea3cf0" },
+          { "name": "title", "value": "Go on a Treasure Hunt" }
+        ]
+      }
+    ]
+  }
+}
+----
+
+////
+$ curl 'http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0' -i -X GET -H 'Accept: application/vnd.amundsen-uber+json'
+HTTP/1.1 200
+Content-Type: application/vnd.amundsen-uber+json
+Transfer-Encoding: chunked
+Date: Thu, 24 Feb 2022 08:14:33 GMT
+
+{"uber":{"version":"1.0","data":[{"name":"self","rel":["self","getTodo"],"url":"http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"},{"name":"todo","data":[{"name":"completed","value":false},{"name":"id","value":"5a1fed06-6e67-4c8c-8462-efca56ea3cf0"},{"name":"title","value":"Go on a Treasure Hunt"}]}]}}
+////
+
+== Bibliographie
+
+* https://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm[Architectural Styles and the Design of Network-based Software Architectures] (Roy T. Fielding, Ph.D.)
+* https://roy.gbiv.com/talks/200804_REST_ApacheCon.pdf[A little REST and Relaxation] (Roy T. Fielding, Ph.D.)
+* https://www.infoq.com/articles/roy-fielding-on-versioning/[Roy Fielding on Versioning, Hypermedia, and REST] (Mike Amundsen)
+* https://8thlight.com/blog/jason-desrosiers/2018/05/30/the-hypermedia-maturity-model.html[The Hypermedia Maturity Model] (Jason Desrosiers)
+* https://spring.io/guides/gs/rest-hateoas/[Building a Hypermedia-Driven RESTful Web Service] (Spring)
+* https://www.fabernovel.com/fr/article/tech/quelles-technologies-pour-faire-des-apis-hypermedia[Quelles technologies pour faire des APIs hypermedia ?] (Fabernovel)
