@@ -28,6 +28,7 @@ Vous n'avez peut-être pas besoin de respecter les contraintes HATEOAS.
 [.stretch]
 image::1024/rest-apis-must-be-hypertext-driven.png[Selon Roy Fielding, les API REST doivent être pilotées par l'hypertexte]
 
+[.source]
 Source : https://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven
 
 [%notitle]
@@ -36,13 +37,22 @@ Source : https://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven
 [.stretch]
 image::1024/restistential-crisis-over-hypermedia-apis.png[RESTistential Crisis over Hypermedia APIs (InfoQ)]
 
+[.source]
 Source : https://www.infoq.com/news/2014/03/rest-at-odds-with-web-apis/
 
 [%notitle]
-=== Hacker News on HATEOAS
+=== Getting hyper about hypermedia APIs
 
 [.stretch]
-image::1024/hacker-news-on-hateoas.png[Hacker News on HATEOAS (Hacker News)]
+image::1024/getting-hyper-about-hypermedia-apis.png[Getting hyper about hypermedia APIs]
+
+[.source]
+Source : https://signalvnoise.com/posts/3373-getting-hyper-about-hypermedia-apis
+
+[.notes]
+--
+David Heinemeier Hansson, le créateur de Ruby on Rails, démonte un certain nombre d'idées reçues à propos d'hypermedia.
+--
 
 [%notitle]
 === Why the hypermedia model is inadequate for Computer-based instruction
@@ -50,7 +60,42 @@ image::1024/hacker-news-on-hateoas.png[Hacker News on HATEOAS (Hacker News)]
 [.stretch]
 image::1024/hypermedia-model-inadequate-for-computer-based-instruction.png[Why the hypermedia model is inadequate for Computer-based instruction (ACM)]
 
+[.source]
 Source : https://dl.acm.org/doi/10.1145/290320.283101
+
+== Gamebook
+
+[.stretch]
+[plantuml]
+----
+[*] --> Draw
+state NextRound <<choice>>
+state HeroWoundLuckTested <<choice>>
+state MonsterWoundLuckTested <<choice>>
+
+Draw --> NextRound : Next Round
+
+NextRound --> HeroWound : [har < mar && hs > 0]
+NextRound --> HeroDied : [har < mar && hs <= 0]
+NextRound --> MonsterWound : [har > mar && ms > 0]
+NextRound --> MonsterDied : [har > mar && ms <= 0]
+NextRound --> Draw : [har == mar]
+
+HeroWound --> NextRound : Next Round
+HeroWound --> HeroWoundLuckTested : Test Luck
+
+HeroWoundLuckTested --> NextRound : [hs > 0]
+HeroWoundLuckTested --> HeroDied : [hs <= 0]
+
+MonsterWound --> NextRound : Next Round
+MonsterWound --> MonsterWoundLuckTested : Test Luck
+
+MonsterWoundLuckTested --> NextRound : [ms > 0]
+MonsterWoundLuckTested --> MonsterDied : [ms <= 0]
+
+HeroDied --> [*]
+MonsterDied --> [*]
+----
 
 == RESTful Web APIs
 
@@ -81,6 +126,7 @@ https://jimwebber.org/[Jim Webber], https://savas.me/[Savas Parastatidis] & Ian 
 [.stretch]
 image::richardson-maturity-model.png[Modèle de maturité de Richardson]
 
+[.source]
 Source : https://martinfowler.com/articles/richardsonMaturityModel.html
 
 == An amazing technology stack
@@ -103,6 +149,7 @@ Au moment de présenter "Justice Will Take Us Millions Of Intricate Moves", Rich
 [quote, Office québécois de la langue française]
 Système de présentation de l'information reposant sur des hyperliens qui permettent de passer d'un document multimédia à un autre.
 
+[.source]
 Source : https://gdt.oqlf.gouv.qc.ca/ficheOqlf.aspx?Id_Fiche=8385304
 
 == HATEOAS ?
@@ -124,7 +171,9 @@ Qui produit des API hypermedia ?
 
 * Microsoft
 * Amazon
-* Drupal
+* Adidas
+* Camunda
+* SlimPay
 * ...
 
 [.notes]
@@ -136,12 +185,42 @@ Qui produit des API hypermedia ?
 [%notitle]
 === Amazon API Gateway
 
-image::amazon-api-gateway-01.png[Amazon API Gateway]
+image::1024/amazon-api-gateway-01.png[Amazon API Gateway]
+
+[.source]
+Source : https://docs.aws.amazon.com/apigateway/api-reference/
 
 [%notitle]
-=== Amazon API Gateway
+=== Adidas HAL API
 
-image::amazon-api-gateway-02.png[Amazon API Gateway]
+image::1024/hal-api-adidas.png[Adidas HAL API]
+
+[.source]
+Source : https://adidas.gitbook.io/api-guidelines/rest-api-guidelines/message/hal
+
+[%notitle]
+=== Microsoft IIS HAL API
+
+image::1024/hal-api-ms-iis.png[Microsoft IIS HAL API]
+
+[.source]
+Source : https://docs.microsoft.com/en-us/iis-administration/api/hal
+
+[%notitle]
+=== Camunda HAL API
+
+image::1024/hal-api-camunda.png[Camunda HAL API]
+
+[.source]
+Source : https://docs.camunda.org/manual/7.16/reference/rest/overview/hal/
+
+[%notitle]
+=== SlimPay HAL API
+
+image::1024/hal-api-slimpay.png[SlimPay HAL API]
+
+[.source]
+Source : https://dev.slimpay.com/hapi/overview/format
 
 == Spring HATEOAS
 
@@ -171,7 +250,7 @@ image::gitk_spring-hateoas_1.2.0_1.5.0-M2.png[Export gitk]
 
 * Compatible avec Spring MVC et Spring WebFlux
 * i18n
-* Support de HAL, HAL-FORMS, Collection+JSON ALPS, UBER out of the box
+* Support de HAL, HAL-FORMS, Collection+JSON, ALPS, UBER out of the box
 * Projets communautaires pour JSON:API et Siren
 
 [%notitle]
@@ -239,6 +318,7 @@ public EntityModel<Todo> getTodo(@PathVariable("id") UUID id) {
 [.stretch]
 image::a317b41c8812b8ced683b44b1a95d6dd8915ddb2_semantic-rest-apis-formats-1.jpeg[Grille de choix de Fabernovel]
 
+[.source]
 Source : https://www.fabernovel.com/fr/article/tech/quelles-technologies-pour-faire-des-apis-hypermedia
 
 == Hypertext Application Language
@@ -247,12 +327,16 @@ https://stateless.group/hal_specification.html
 
 IANA : `application/hal+json` et `application/hal+xml`
 
+* Le plus simple et le plus populaire
+* Rien de prévu pour les modifications
+
 [%notitle]
 === HAL
 
 [.stretch]
 image::info-model.png[The HAL Model]
 
+[.source]
 Source : https://stateless.group/hal_specification.html
 
 [%notitle]
@@ -688,4 +772,8 @@ Date: Thu, 24 Feb 2022 08:14:33 GMT
 * https://www.infoq.com/articles/roy-fielding-on-versioning/[Roy Fielding on Versioning, Hypermedia, and REST] (Mike Amundsen)
 * https://8thlight.com/blog/jason-desrosiers/2018/05/30/the-hypermedia-maturity-model.html[The Hypermedia Maturity Model] (Jason Desrosiers)
 * https://spring.io/guides/gs/rest-hateoas/[Building a Hypermedia-Driven RESTful Web Service] (Spring)
+
+== Bibliographie
+
 * https://www.fabernovel.com/fr/article/tech/quelles-technologies-pour-faire-des-apis-hypermedia[Quelles technologies pour faire des APIs hypermedia ?] (Fabernovel)
+* https://jaxenter.com/restful-hypermedia-apis-microservices-148182.html[RESTful hypermedia APIs: Useful or not?] (Kai Tödler)

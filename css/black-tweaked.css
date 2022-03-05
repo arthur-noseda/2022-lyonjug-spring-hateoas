@@ -7,3 +7,8 @@
 .reveal h5,
 .reveal h6 {
   text-transform: none; }
+
+.source {
+  font-size: 50%;
+  opacity: 75%;
+}
