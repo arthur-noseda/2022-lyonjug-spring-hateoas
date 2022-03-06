@@ -9,12 +9,12 @@
 Tout commence par un besoin
 
 [%notitle]
-== Comment concevoir l'API RESTful d'un processus...
+=== Comment concevoir l'API RESTful d'un processus...
 
 Comment concevoir l'API RESTful d'un processus...
 
 [%notitle]
-== Sans que le client ne connaisse à l'avance les états et les transitions.
+=== Sans que le client ne connaisse à l'avance les états et les transitions.
 
 Sans que le client ne connaisse à l'avance les états et les transitions.
 
@@ -63,7 +63,12 @@ image::1024/hypermedia-model-inadequate-for-computer-based-instruction.png[Why t
 [.source]
 Source : https://dl.acm.org/doi/10.1145/290320.283101
 
-== Gamebook
+[%notitle]
+== Demo
+
+image::ldvelh-tiled.jpg[background, size=cover]
+
+=== Gamebook
 
 [.stretch]
 [plantuml]
@@ -129,12 +134,13 @@ image::richardson-maturity-model.png[Modèle de maturité de Richardson]
 [.source]
 Source : https://martinfowler.com/articles/richardsonMaturityModel.html
 
-== An amazing technology stack
+=== Le talk de 2008 à la QCon
 
 [.stretch]
 image::2008-QCon-act3-img54.png[An amazing technology stack]
 
-La transcription du talk de 2008 à la QCon : https://www.crummy.com/writing/speaking/2008-QCon/
+[.source]
+Source : https://www.crummy.com/writing/speaking/2008-QCon/
 
 [.notes]
 --
@@ -144,7 +150,7 @@ Au moment de présenter "Justice Will Take Us Millions Of Intricate Moves", Rich
 == Hypermedia ?
 
 [%notitle]
-== Définition
+=== Définition
 
 [quote, Office québécois de la langue française]
 Système de présentation de l'information reposant sur des hyperliens qui permettent de passer d'un document multimédia à un autre.
@@ -154,10 +160,10 @@ Source : https://gdt.oqlf.gouv.qc.ca/ficheOqlf.aspx?Id_Fiche=8385304
 
 == HATEOAS ?
 
-== Hypermedia As The Engine Of Application State
+=== Hypermedia As The Engine Of Application State
 
 [%notitle]
-== Définition d'HATEOAS
+=== Définition d'HATEOAS
 
 L'état de la ressource détermine la liste des liens et fait partie de la représentation
 
@@ -167,7 +173,7 @@ L'état de la ressource détermine la liste des liens et fait partie de la repr�
 Qui produit des API hypermedia ?
 
 [%notitle]
-== Producteurs d'hypermedia
+=== Producteurs d'hypermedia
 
 * Microsoft
 * Amazon
@@ -175,12 +181,6 @@ Qui produit des API hypermedia ?
 * Camunda
 * SlimPay
 * ...
-
-[.notes]
---
-* https://docs.aws.amazon.com/apigateway/api-reference/
-* https://docs.aws.amazon.com/apigateway/api-reference/link-relation/resource-create/
---
 
 [%notitle]
 === Amazon API Gateway
@@ -225,6 +225,7 @@ Source : https://dev.slimpay.com/hapi/overview/format
 == Spring HATEOAS
 
 == The usual suspects
+
 image:oliver-drotbohm.jpg[alt=Oliver Drotbohm, width=200] image:greg-turnquist.jpg[alt=Greg Turnquist, width=200]
 
 https://odrotbohm.de/[Oliver Drotbohm] & http://gregturnquist.com/[Greg Turnquist]
@@ -466,6 +467,8 @@ image::1024/iana-link-registrations_spring-hateoas_1024.png[IANA Link Registrati
 https://rwcbook.github.io/hal-forms/
 
 IANA : `application/prs.hal-forms+json`
+
+* Ajoute la notion de formulaire (au sens HTML) à HAL
 
 [.notes]
 --
@@ -773,7 +776,7 @@ Date: Thu, 24 Feb 2022 08:14:33 GMT
 * https://8thlight.com/blog/jason-desrosiers/2018/05/30/the-hypermedia-maturity-model.html[The Hypermedia Maturity Model] (Jason Desrosiers)
 * https://spring.io/guides/gs/rest-hateoas/[Building a Hypermedia-Driven RESTful Web Service] (Spring)
 
-== Bibliographie
+=== Bibliographie
 
 * https://www.fabernovel.com/fr/article/tech/quelles-technologies-pour-faire-des-apis-hypermedia[Quelles technologies pour faire des APIs hypermedia ?] (Fabernovel)
 * https://jaxenter.com/restful-hypermedia-apis-microservices-148182.html[RESTful hypermedia APIs: Useful or not?] (Kai Tödler)
