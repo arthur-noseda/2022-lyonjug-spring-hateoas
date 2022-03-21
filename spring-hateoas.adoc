@@ -584,6 +584,18 @@ Date: Thu, 24 Feb 2022 08:06:17 GMT
 }
 ////
 
+== HAL Explorer
+
+* Une application Angular développée par Kai Tödter
+* Supporte HAL et HAL-FORMS
+* https://github.com/toedter/hal-explorer
+
+[%notitle]
+=== HAL Explorer
+
+[.stretch]
+image::1280/hal-explorer.png[HAL Explorer]
+
 == Collection+JSON
 
 http://amundsen.com/media-types/collection/
@@ -775,8 +787,9 @@ Date: Thu, 24 Feb 2022 08:14:33 GMT
 * https://www.infoq.com/articles/roy-fielding-on-versioning/[Roy Fielding on Versioning, Hypermedia, and REST] (Mike Amundsen)
 * https://8thlight.com/blog/jason-desrosiers/2018/05/30/the-hypermedia-maturity-model.html[The Hypermedia Maturity Model] (Jason Desrosiers)
 * https://spring.io/guides/gs/rest-hateoas/[Building a Hypermedia-Driven RESTful Web Service] (Spring)
+* https://github.com/odrotbohm/spring-restbucks[Spring Restbucks] (Oliver Drotbohm)
 
 === Bibliographie
 
 * https://www.fabernovel.com/fr/article/tech/quelles-technologies-pour-faire-des-apis-hypermedia[Quelles technologies pour faire des APIs hypermedia ?] (Fabernovel)
-* https://jaxenter.com/restful-hypermedia-apis-microservices-148182.html[RESTful hypermedia APIs: Useful or not?] (Kai Tödler)
+* https://jaxenter.com/restful-hypermedia-apis-microservices-148182.html[RESTful hypermedia APIs: Useful or not?] (Kai Tödter)
