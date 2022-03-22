@@ -4,14 +4,29 @@
 :imagesdir: assets
 
 [%notitle]
+== Arthur Noseda
+
+Arthur Noseda
+
+Marié, 2 enfants
+
+Développeur Java depuis 2003
+
+https://mixteen.org/[MixTeen]
+
+https://swcraftlyon.github.io/[Software crafters de Lyon]
+
+http://blog.ingeniouscontraptions.com/[Blog]
+
+[%notitle]
 == Tout commence par un besoin
 
 Tout commence par un besoin
 
 [%notitle]
-=== Comment concevoir l'API RESTful d'un processus...
+=== Comment concevoir l'API REST d'un processus...
 
-Comment concevoir l'API RESTful d'un processus...
+Comment concevoir l'API REST d'un processus...
 
 [%notitle]
 === Sans que le client ne connaisse à l'avance les états et les transitions.
@@ -27,6 +42,14 @@ Vous n'avez peut-être pas besoin de respecter les contraintes HATEOAS.
 
 [.stretch]
 image::1024/rest-apis-must-be-hypertext-driven.png[Selon Roy Fielding, les API REST doivent être pilotées par l'hypertexte]
+
+[.notes]
+--
+* Roy Fielding est l’un des principaux auteurs de la spécification HTTP.
+* Membre fondateur de la fondation Apache
+* A défini le style d'architecture _representational state transfer_
+* ...
+--
 
 [.source]
 Source : https://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven
@@ -68,7 +91,14 @@ Source : https://dl.acm.org/doi/10.1145/290320.283101
 
 image::ldvelh-tiled.jpg[background, size=cover]
 
-=== Gamebook
+=== LDVELH
+
+image::ian-robinson-javazone-2014-rest-in-practice-in-practice.png[REST in Practice, in Practice]
+
+[.source]
+Source : https://vimeo.com/105761138
+
+=== LDVELH
 
 [.stretch]
 [plantuml]
@@ -122,7 +152,7 @@ image::rest-in-practice.jpg[REST in Practice]
 [%notitle]
 === Webber, Parastatidis & Robinson
 
-image:jim-webber.png[alt=Jim Webber,width=200] image:Savas.jpg[alt=Savas Parastatidis,width=200]
+image:jim-webber.png[alt=Jim Webber,width=200] image:Savas.jpg[alt=Savas Parastatidis,width=200] image:ian-robinson.jpg[alt=Ian Robinson,width=200]
 
 https://jimwebber.org/[Jim Webber], https://savas.me/[Savas Parastatidis] & Ian Robinson
 
@@ -145,6 +175,21 @@ Source : https://www.crummy.com/writing/speaking/2008-QCon/
 [.notes]
 --
 Au moment de présenter "Justice Will Take Us Millions Of Intricate Moves", Richardson travaillait sur l'application Launchpad pour Canonical.
+--
+
+=== Modèle de maturité hypermédia
+
+Jason Desrosiers redécoupe le niveau 3 en 4
+
+[.source]
+Source : https://8thlight.com/blog/jason-desrosiers/2018/05/30/the-hypermedia-maturity-model.html
+
+[.notes]
+--
+* HMM 0 : `application/json` contenant des URL
+* HMM 1 : type de médias formalisant ce que sont les liens
+* HMM 2 : HMM 1 + type de médias formalisant comment mettre à jour une ressource
+* HMM 3 : HMM 2 + type de médias utilisant un vocabulaire dont la sémantique est décrite et partagée
 --
 
 == Hypermedia ?
@@ -175,11 +220,13 @@ Qui produit des API hypermedia ?
 [%notitle]
 === Producteurs d'hypermedia
 
+* Spring
 * Microsoft
 * Amazon
 * Adidas
 * Camunda
 * SlimPay
+* NRK TV
 * ...
 
 [%notitle]
@@ -239,7 +286,7 @@ https://odrotbohm.de/[Oliver Drotbohm] & http://gregturnquist.com/[Greg Turnquis
 
 [.notes]
 --
-Le titre exact de la thèse de Roy Fielding : Architectural Styles and the Design of Network-based Software Architectures
+Le titre exact de la dissertation de Roy Fielding : Architectural Styles and the Design of Network-based Software Architectures
 --
 
 == Mais un produit vivant
@@ -330,6 +377,11 @@ IANA : `application/hal+json` et `application/hal+xml`
 
 * Le plus simple et le plus populaire
 * Rien de prévu pour les modifications
+
+[.notes]
+--
+L'Internet Assigned Numbers Authority supervise entre autres l'allocation globale des adresses IP, la gestion de la zone racine dans les DNS et les types de médias.
+--
 
 [%notitle]
 === HAL
@@ -780,12 +832,34 @@ Date: Thu, 24 Feb 2022 08:14:33 GMT
 {"uber":{"version":"1.0","data":[{"name":"self","rel":["self","getTodo"],"url":"http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"},{"name":"todo","data":[{"name":"completed","value":false},{"name":"id","value":"5a1fed06-6e67-4c8c-8462-efca56ea3cf0"},{"name":"title","value":"Go on a Treasure Hunt"}]}]}}
 ////
 
+== Spring Boot Actuator
+
+[.stretch]
+image::1024/spring-actuator.png[Spring Actuator]
+
+[%notitle]
+=== Spring Boot Actuator
+
+[source]
+----
+$ curl -I http://localhost:8080/actuator
+HTTP/1.1 200
+Content-Type: application/vnd.spring-boot.actuator.v3+json
+Content-Length: 1735
+Date: Tue, 22 Mar 2022 20:42:01 GMT
+----
+
+[%notitle]
+=== Spring Boot Actuator
+
+* Documenté : https://docs.spring.io/spring-boot/docs/current/actuator-api/
+* Mais pas enregistré auprès de l'IANA
+
 == Bibliographie
 
 * https://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm[Architectural Styles and the Design of Network-based Software Architectures] (Roy T. Fielding, Ph.D.)
 * https://roy.gbiv.com/talks/200804_REST_ApacheCon.pdf[A little REST and Relaxation] (Roy T. Fielding, Ph.D.)
 * https://www.infoq.com/articles/roy-fielding-on-versioning/[Roy Fielding on Versioning, Hypermedia, and REST] (Mike Amundsen)
-* https://8thlight.com/blog/jason-desrosiers/2018/05/30/the-hypermedia-maturity-model.html[The Hypermedia Maturity Model] (Jason Desrosiers)
 * https://spring.io/guides/gs/rest-hateoas/[Building a Hypermedia-Driven RESTful Web Service] (Spring)
 * https://github.com/odrotbohm/spring-restbucks[Spring Restbucks] (Oliver Drotbohm)
 
@@ -793,3 +867,6 @@ Date: Thu, 24 Feb 2022 08:14:33 GMT
 
 * https://www.fabernovel.com/fr/article/tech/quelles-technologies-pour-faire-des-apis-hypermedia[Quelles technologies pour faire des APIs hypermedia ?] (Fabernovel)
 * https://jaxenter.com/restful-hypermedia-apis-microservices-148182.html[RESTful hypermedia APIs: Useful or not?] (Kai Tödter)
+* https://www.youtube.com/watch?v=Q3hAPZVu3HI[Evolving architecture with DDD and hypermedia] (Einar Høst)
+
+== Merci
