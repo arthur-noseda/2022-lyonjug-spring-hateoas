@@ -16,7 +16,7 @@ https://mixteen.org/[MixTeen]
 
 https://swcraftlyon.github.io/[Software crafters de Lyon]
 
-http://blog.ingeniouscontraptions.com/[Blog]
+blog.ingeniouscontraptions.com
 
 [%notitle]
 == Tout commence par un besoin
@@ -334,12 +334,12 @@ image::start-spring-io-rest-docs.png[start.spring.io > Spring REST Docs]
 @GetMapping
 public CollectionModel<EntityModel<Todo>> getTodos() {
   return CollectionModel.of(todoRepository.findAll().stream()
-      .map(t -> EntityModel.of(t,
-          linkTo(methodOn(TodoController.class)
-              .getTodo(t.getId())).withSelfRel()))
+      .map(this::toRepresentation)
       .collect(Collectors.toList()),
           linkTo(methodOn(TodoController.class)
-              .getTodos()).withSelfRel());
+              .getTodos()).withSelfRel()
+          .andAffordance(afford(methodOn(TodoController.class)
+              .createTodo(null))));
 }
 ----
 
@@ -351,10 +351,18 @@ public CollectionModel<EntityModel<Todo>> getTodos() {
 @GetMapping("/{id}")
 public EntityModel<Todo> getTodo(@PathVariable("id") UUID id) {
   return todoRepository.findById(id)
-      .map(t -> EntityModel.of(t,
-          linkTo(methodOn(TodoController.class)
-              .getTodo(t.getId())).withSelfRel()))
-      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+      .map(this::toRepresentation)
+      .orElseThrow(this::notFound);
+}
+
+private EntityModel<Todo> toRepresentation(Todo todo) {
+  return EntityModel.of(todo,
+      linkTo(methodOn(TodoController.class)
+          .getTodo(todo.getId())).withSelfRel()
+          .andAffordance(afford(methodOn(TodoController.class)
+              .updateTodo(todo.getId(), null)))
+          .andAffordance(afford(methodOn(TodoController.class)
+              .deleteTodo(todo.getId()))));
 }
 ----
 
@@ -400,16 +408,15 @@ Source : https://stateless.group/hal_specification.html
 {
   "_embedded" : {
     "todos" : [ {
-      "id" : "5a1fed06-6e67-4c8c-8462-efca56ea3cf0",
+      "id" : "5f4bb924-e930-4b2d-ae1c-4bdb501752ca",
       "title" : "Go on a Treasure Hunt",
       "completed" : false,
       "_links" : {
         "self" : {
-          "href" : "http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"
+          "href" : "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"
         }
       }
-    },
-    ... ]
+    }, ... ]
   },
   "_links" : {
     "self" : {
@@ -424,35 +431,35 @@ $ curl 'http://localhost:8080/todos' -i -X GET -H 'Accept: application/hal+json'
 HTTP/1.1 200
 Content-Type: application/hal+json
 Transfer-Encoding: chunked
-Date: Wed, 23 Feb 2022 23:35:10 GMT
+Date: Wed, 23 Mar 2022 09:12:07 GMT
 
 {
   "_embedded" : {
     "todos" : [ {
-      "id" : "5a1fed06-6e67-4c8c-8462-efca56ea3cf0",
+      "id" : "5f4bb924-e930-4b2d-ae1c-4bdb501752ca",
       "title" : "Go on a Treasure Hunt",
       "completed" : false,
       "_links" : {
         "self" : {
-          "href" : "http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"
+          "href" : "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"
         }
       }
     }, {
-      "id" : "724b6dc6-aa2a-4efc-be1b-1d1ab4c4b4b0",
+      "id" : "76d308e2-61f3-4eda-8a59-e9dcba9cd343",
       "title" : "Pay Off Library Fee",
       "completed" : true,
       "_links" : {
         "self" : {
-          "href" : "http://localhost:8080/todos/724b6dc6-aa2a-4efc-be1b-1d1ab4c4b4b0"
+          "href" : "http://localhost:8080/todos/76d308e2-61f3-4eda-8a59-e9dcba9cd343"
         }
       }
     }, {
-      "id" : "71f235e3-541e-42bb-8241-7323fee4225d",
+      "id" : "9f3391e2-2351-499d-b741-57006748cb0b",
       "title" : "Make Homemade Beer",
       "completed" : false,
       "_links" : {
         "self" : {
-          "href" : "http://localhost:8080/todos/71f235e3-541e-42bb-8241-7323fee4225d"
+          "href" : "http://localhost:8080/todos/9f3391e2-2351-499d-b741-57006748cb0b"
         }
       }
     } ]
@@ -470,32 +477,32 @@ Date: Wed, 23 Feb 2022 23:35:10 GMT
 
 [source,json]
 ----
-{
-  "id" : "5a1fed06-6e67-4c8c-8462-efca56ea3cf0",
+
+  "id" : "5f4bb924-e930-4b2d-ae1c-4bdb501752ca",
   "title" : "Go on a Treasure Hunt",
   "completed" : false,
   "_links" : {
     "self" : {
-      "href" : "http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"
+      "href" : "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"
     }
   }
 }
 ----
 
 ////
-$ curl 'http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0' -i -X GET -H 'Accept: application/hal+json'
+$ curl 'http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca' -i -X GET -H 'Accept: application/hal+json'
 HTTP/1.1 200
 Content-Type: application/hal+json
 Transfer-Encoding: chunked
-Date: Thu, 24 Feb 2022 08:05:22 GMT
+Date: Wed, 23 Mar 2022 09:12:52 GMT
 
 {
-  "id" : "5a1fed06-6e67-4c8c-8462-efca56ea3cf0",
+  "id" : "5f4bb924-e930-4b2d-ae1c-4bdb501752ca",
   "title" : "Go on a Treasure Hunt",
   "completed" : false,
   "_links" : {
     "self" : {
-      "href" : "http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"
+      "href" : "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"
     }
   }
 }
@@ -535,20 +542,46 @@ IANA : `application/prs.hal-forms+json`
 {
   "_embedded" : {
     "todos" : [ {
-      "id" : "5a1fed06-6e67-4c8c-8462-efca56ea3cf0",
+      "id" : "5f4bb924-e930-4b2d-ae1c-4bdb501752ca",
       "title" : "Go on a Treasure Hunt",
       "completed" : false,
       "_links" : {
         "self" : {
-          "href" : "http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"
+          "href" : "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"
+        }
+      },
+      "_templates" : {
+        "default" : {
+          "method" : "PUT",
+          "properties" : [ {
+            "name" : "completed",
+            "readOnly" : true
+          }, {
+            "name" : "title",
+            "readOnly" : true,
+            "type" : "text"
+          } ]
+        },
+        "deleteTodo" : {
+          "method" : "DELETE",
+          "properties" : [ ]
         }
       }
-    },
-    ... ]
+    }, ... ]
   },
   "_links" : {
     "self" : {
       "href" : "http://localhost:8080/todos"
+    }
+  },
+  "_templates" : {
+    "default" : {
+      "method" : "POST",
+      "properties" : [ {
+        "name" : "title",
+        "readOnly" : true,
+        "type" : "text"
+      } ]
     }
   }
 }
@@ -559,35 +592,86 @@ $ curl 'http://localhost:8080/todos' -i -X GET -H 'Accept: application/prs.hal-f
 HTTP/1.1 200
 Content-Type: application/prs.hal-forms+json
 Transfer-Encoding: chunked
-Date: Wed, 23 Feb 2022 23:36:31 GMT
+Date: Wed, 23 Mar 2022 09:08:48 GMT
 
 {
   "_embedded" : {
     "todos" : [ {
-      "id" : "5a1fed06-6e67-4c8c-8462-efca56ea3cf0",
+      "id" : "5f4bb924-e930-4b2d-ae1c-4bdb501752ca",
       "title" : "Go on a Treasure Hunt",
       "completed" : false,
       "_links" : {
         "self" : {
-          "href" : "http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"
+          "href" : "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"
+        }
+      },
+      "_templates" : {
+        "default" : {
+          "method" : "PUT",
+          "properties" : [ {
+            "name" : "completed",
+            "readOnly" : true
+          }, {
+            "name" : "title",
+            "readOnly" : true,
+            "type" : "text"
+          } ]
+        },
+        "deleteTodo" : {
+          "method" : "DELETE",
+          "properties" : [ ]
         }
       }
     }, {
-      "id" : "724b6dc6-aa2a-4efc-be1b-1d1ab4c4b4b0",
+      "id" : "76d308e2-61f3-4eda-8a59-e9dcba9cd343",
       "title" : "Pay Off Library Fee",
       "completed" : true,
       "_links" : {
         "self" : {
-          "href" : "http://localhost:8080/todos/724b6dc6-aa2a-4efc-be1b-1d1ab4c4b4b0"
+          "href" : "http://localhost:8080/todos/76d308e2-61f3-4eda-8a59-e9dcba9cd343"
+        }
+      },
+      "_templates" : {
+        "default" : {
+          "method" : "PUT",
+          "properties" : [ {
+            "name" : "completed",
+            "readOnly" : true
+          }, {
+            "name" : "title",
+            "readOnly" : true,
+            "type" : "text"
+          } ]
+        },
+        "deleteTodo" : {
+          "method" : "DELETE",
+          "properties" : [ ]
         }
       }
     }, {
-      "id" : "71f235e3-541e-42bb-8241-7323fee4225d",
+      "id" : "9f3391e2-2351-499d-b741-57006748cb0b",
       "title" : "Make Homemade Beer",
       "completed" : false,
       "_links" : {
         "self" : {
-          "href" : "http://localhost:8080/todos/71f235e3-541e-42bb-8241-7323fee4225d"
+          "href" : "http://localhost:8080/todos/9f3391e2-2351-499d-b741-57006748cb0b"
+        }
+      },
+      "_templates" : {
+        "default" : {
+          "method" : "PUT",
+          "properties" : [ {
+            "name" : "completed",
+            "readOnly" : true
+          }, {
+            "name" : "title",
+            "readOnly" : true,
+            "type" : "text"
+          } ]
+        },
+        "deleteTodo" : {
+          "method" : "DELETE",
+          "properties" : [ ]
         }
       }
     } ]
@@ -595,6 +679,16 @@ Date: Wed, 23 Feb 2022 23:36:31 GMT
   "_links" : {
     "self" : {
       "href" : "http://localhost:8080/todos"
+    }
+  },
+  "_templates" : {
+    "default" : {
+      "method" : "POST",
+      "properties" : [ {
+        "name" : "title",
+        "readOnly" : true,
+        "type" : "text"
+      } ]
     }
   }
 }
@@ -606,31 +700,65 @@ Date: Wed, 23 Feb 2022 23:36:31 GMT
 [source,json]
 ----
 {
-  "id" : "5a1fed06-6e67-4c8c-8462-efca56ea3cf0",
+  "id" : "5f4bb924-e930-4b2d-ae1c-4bdb501752ca",
   "title" : "Go on a Treasure Hunt",
   "completed" : false,
   "_links" : {
     "self" : {
-      "href" : "http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"
+      "href" : "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"
+    }
+  },
+  "_templates" : {
+    "default" : {
+      "method" : "PUT",
+      "properties" : [ {
+        "name" : "completed",
+        "readOnly" : true
+      }, {
+        "name" : "title",
+        "readOnly" : true,
+        "type" : "text"
+      } ]
+    },
+    "deleteTodo" : {
+      "method" : "DELETE",
+      "properties" : [ ]
     }
   }
 }
 ----
 
 ////
-$ curl 'http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0' -i -X GET -H 'Accept: application/prs.hal-forms+json'
+$ curl 'http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca' -i -X GET -H 'Accept: application/prs.hal-forms+json'
 HTTP/1.1 200
 Content-Type: application/prs.hal-forms+json
 Transfer-Encoding: chunked
-Date: Thu, 24 Feb 2022 08:06:17 GMT
+Date: Wed, 23 Mar 2022 09:09:57 GMT
 
 {
-  "id" : "5a1fed06-6e67-4c8c-8462-efca56ea3cf0",
+  "id" : "5f4bb924-e930-4b2d-ae1c-4bdb501752ca",
   "title" : "Go on a Treasure Hunt",
   "completed" : false,
   "_links" : {
     "self" : {
-      "href" : "http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"
+      "href" : "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"
+    }
+  },
+  "_templates" : {
+    "default" : {
+      "method" : "PUT",
+      "properties" : [ {
+        "name" : "completed",
+        "readOnly" : true
+      }, {
+        "name" : "title",
+        "readOnly" : true,
+        "type" : "text"
+      } ]
+    },
+    "deleteTodo" : {
+      "method" : "DELETE",
+      "properties" : [ ]
     }
   }
 }
@@ -720,11 +848,236 @@ Date: Thu, 24 Feb 2022 07:35:22 GMT
 {"id":"5a1fed06-6e67-4c8c-8462-efca56ea3cf0","title":"Go on a Treasure Hunt","completed":false,"links":[{"rel":"self","href":"http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"}]}
 ////
 
+== JSON:API
+
+https://jsonapi.org/
+
+IANA : `application/vnd.api+json`
+
+Extension communautaire
+
+[%notitle]
+=== JSON:API
+
+[source,json]
+----
+{
+  "data": [
+    {
+      "id": "5f4bb924-e930-4b2d-ae1c-4bdb501752ca",
+      "type": "todos",
+      "attributes": {
+        "title": "Go on a Treasure Hunt",
+        "completed": false
+      },
+      "links": {
+        "self": "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"
+      }
+    },
+    ...
+  ],
+  "links": {
+    "self": "http://localhost:8080/todos"
+  }
+}
+----
+
+////
+$ curl 'http://localhost:8080/todos' -i -X GET -H 'Accept: application/vnd.api+json'
+HTTP/1.1 200
+Content-Type: application/vnd.api+json
+Transfer-Encoding: chunked
+Date: Wed, 23 Mar 2022 08:38:29 GMT
+
+{"data":[{"id":"5f4bb924-e930-4b2d-ae1c-4bdb501752ca","type":"todos","attributes":{"title":"Go on a Treasure Hunt","completed":false},"links":{"self":"http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"}},{"id":"76d308e2-61f3-4eda-8a59-e9dcba9cd343","type":"todos","attributes":{"title":"Pay Off Library Fee","completed":true},"links":{"self":"http://localhost:8080/todos/76d308e2-61f3-4eda-8a59-e9dcba9cd343"}},{"id":"9f3391e2-2351-499d-b741-57006748cb0b","type":"todos","attributes":{"title":"Make Homemade Beer","completed":false},"links":{"self":"http://localhost:8080/todos/9f3391e2-2351-499d-b741-57006748cb0b"}}],"links":{"self":"http://localhost:8080/todos"}}
+////
+
+[%notitle]
+=== JSON:API
+
+[source,json]
+----
+{
+  "data": {
+    "id": "5f4bb924-e930-4b2d-ae1c-4bdb501752ca",
+    "type": "todos",
+    "attributes": {
+      "title": "Go on a Treasure Hunt",
+      "completed": false
+    }
+  },
+  "links": {
+    "self": "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"
+  }
+}
+----
+
+////
+$ curl 'http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca' -i -X GET -H 'Accept: application/vnd.api+json'
+HTTP/1.1 200
+Content-Type: application/vnd.api+json
+Transfer-Encoding: chunked
+Date: Wed, 23 Mar 2022 08:29:29 GMT
+
+{"data":{"id":"5f4bb924-e930-4b2d-ae1c-4bdb501752ca","type":"todos","attributes":{"title":"Go on a Treasure Hunt","completed":false}},"links":{"self":"http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"}}
+////
+
 == Siren
 
 https://github.com/kevinswiber/siren
 
 IANA : `application/vnd.siren+json`
+
+Extension communautaire
+
+[%notitle]
+=== Siren
+
+[source,json]
+----
+{
+  "class": [
+    "collection"
+  ],
+  "entities": [
+    {
+      "class": [
+        "entity"
+      ],
+      "rel": [
+        "item"
+      ],
+      "properties": {
+        "id": "5f4bb924-e930-4b2d-ae1c-4bdb501752ca",
+        "title": "Go on a Treasure Hunt",
+        "completed": false
+      },
+      "links": [
+        {
+          "rel": [
+            "self"
+          ],
+          "href": "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"
+        }
+      ],
+      "actions": [
+        {
+          "name": "updateTodo",
+          "method": "PUT",
+          "href": "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca",
+          "type": "application/x-www-form-urlencoded",
+          "fields": [
+            {
+              "name": "completed",
+              "type": "text"
+            },
+            {
+              "name": "title",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "name": "deleteTodo",
+          "method": "DELETE",
+          "href": "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"
+        }
+      ]
+    },
+    ...
+  ],
+  "links": [
+    {
+      "rel": [
+        "self"
+      ],
+      "href": "http://localhost:8080/todos"
+    }
+  ],
+  "actions": [
+    {
+      "name": "createTodo",
+      "method": "POST",
+      "href": "http://localhost:8080/todos",
+      "type": "application/x-www-form-urlencoded",
+      "fields": [
+        {
+          "name": "title",
+          "type": "text"
+        }
+      ]
+    }
+  ]
+}
+----
+
+////
+$ curl 'http://localhost:8080/todos' -i -X GET -H 'Accept: application/vnd.siren+json'
+HTTP/1.1 200
+Content-Type: application/vnd.siren+json
+Transfer-Encoding: chunked
+Date: Wed, 23 Mar 2022 08:46:24 GMT
+
+{"class":["collection"],"entities":[{"class":["entity"],"rel":["item"],"properties":{"id":"5f4bb924-e930-4b2d-ae1c-4bdb501752ca","title":"Go on a Treasure Hunt","completed":false},"links":[{"rel":["self"],"href":"http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"}],"actions":[{"name":"updateTodo","method":"PUT","href":"http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca","type":"application/x-www-form-urlencoded","fields":[{"name":"completed","type":"text"},{"name":"title","type":"text"}]},{"name":"deleteTodo","method":"DELETE","href":"http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"}]},{"class":["entity"],"rel":["item"],"properties":{"id":"76d308e2-61f3-4eda-8a59-e9dcba9cd343","title":"Pay Off Library Fee","completed":true},"links":[{"rel":["self"],"href":"http://localhost:8080/todos/76d308e2-61f3-4eda-8a59-e9dcba9cd343"}],"actions":[{"name":"updateTodo","method":"PUT","href":"http://localhost:8080/todos/76d308e2-61f3-4eda-8a59-e9dcba9cd343","type":"application/x-www-form-urlencoded","fields":[{"name":"completed","type":"text"},{"name":"title","type":"text"}]},{"name":"deleteTodo","method":"DELETE","href":"http://localhost:8080/todos/76d308e2-61f3-4eda-8a59-e9dcba9cd343"}]},{"class":["entity"],"rel":["item"],"properties":{"id":"9f3391e2-2351-499d-b741-57006748cb0b","title":"Make Homemade Beer","completed":false},"links":[{"rel":["self"],"href":"http://localhost:8080/todos/9f3391e2-2351-499d-b741-57006748cb0b"}],"actions":[{"name":"updateTodo","method":"PUT","href":"http://localhost:8080/todos/9f3391e2-2351-499d-b741-57006748cb0b","type":"application/x-www-form-urlencoded","fields":[{"name":"completed","type":"text"},{"name":"title","type":"text"}]},{"name":"deleteTodo","method":"DELETE","href":"http://localhost:8080/todos/9f3391e2-2351-499d-b741-57006748cb0b"}]}],"links":[{"rel":["self"],"href":"http://localhost:8080/todos"}],"actions":[{"name":"createTodo","method":"POST","href":"http://localhost:8080/todos","type":"application/x-www-form-urlencoded","fields":[{"name":"title","type":"text"}]}]}
+////
+
+[%notitle]
+=== Siren
+
+[source,json]
+----
+{
+  "class": [
+    "entity"
+  ],
+  "properties": {
+    "id": "5f4bb924-e930-4b2d-ae1c-4bdb501752ca",
+    "title": "Go on a Treasure Hunt",
+    "completed": false
+  },
+  "links": [
+    {
+      "rel": [
+        "self"
+      ],
+      "href": "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"
+    }
+  ],
+  "actions": [
+    {
+      "name": "updateTodo",
+      "method": "PUT",
+      "href": "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca",
+      "type": "application/x-www-form-urlencoded",
+      "fields": [
+        {
+          "name": "completed",
+          "type": "text"
+        },
+        {
+          "name": "title",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "name": "deleteTodo",
+      "method": "DELETE",
+      "href": "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"
+    }
+  ]
+}
+----
+
+////
+$ curl 'http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca' -i -X GET -H 'Accept: application/vnd.siren+json'
+HTTP/1.1 200
+Content-Type: application/vnd.siren+json
+Transfer-Encoding: chunked
+Date: Wed, 23 Mar 2022 08:47:07 GMT
+
+{"class":["entity"],"properties":{"id":"5f4bb924-e930-4b2d-ae1c-4bdb501752ca","title":"Go on a Treasure Hunt","completed":false},"links":[{"rel":["self"],"href":"http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"}],"actions":[{"name":"updateTodo","method":"PUT","href":"http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca","type":"application/x-www-form-urlencoded","fields":[{"name":"completed","type":"text"},{"name":"title","type":"text"}]},{"name":"deleteTodo","method":"DELETE","href":"http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"}]}
+////
 
 == Problem
 
@@ -738,6 +1091,73 @@ https://json-ld.org/
 
 IANA : `application/ld+json`
 
+[%notitle]
+=== JSON-LD
+
+[source,json]
+----
+{
+  "links": [
+    {
+      "rel": "self",
+      "href": "http://localhost:8080/todos"
+    }
+  ],
+  "content": [
+    {
+      "id": "5f4bb924-e930-4b2d-ae1c-4bdb501752ca",
+      "title": "Go on a Treasure Hunt",
+      "completed": false,
+      "links": [
+        {
+          "rel": "self",
+          "href": "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"
+        }
+      ]
+    },
+    ...
+  ]
+}
+----
+
+////
+$ curl 'http://localhost:8080/todos' -i -X GET -H 'Accept: application/ld+json'
+HTTP/1.1 200
+Content-Type: application/ld+json
+Transfer-Encoding: chunked
+Date: Wed, 23 Mar 2022 09:04:25 GMT
+
+{"links":[{"rel":"self","href":"http://localhost:8080/todos"}],"content":[{"id":"5f4bb924-e930-4b2d-ae1c-4bdb501752ca","title":"Go on a Treasure Hunt","completed":false,"links":[{"rel":"self","href":"http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"}]},{"id":"76d308e2-61f3-4eda-8a59-e9dcba9cd343","title":"Pay Off Library Fee","completed":true,"links":[{"rel":"self","href":"http://localhost:8080/todos/76d308e2-61f3-4eda-8a59-e9dcba9cd343"}]},{"id":"9f3391e2-2351-499d-b741-57006748cb0b","title":"Make Homemade Beer","completed":false,"links":[{"rel":"self","href":"http://localhost:8080/todos/9f3391e2-2351-499d-b741-57006748cb0b"}]}]}
+////
+
+[%notitle]
+=== JSON-LD
+
+[source,json]
+----
+{
+  "id": "5f4bb924-e930-4b2d-ae1c-4bdb501752ca",
+  "title": "Go on a Treasure Hunt",
+  "completed": false,
+  "links": [
+    {
+      "rel": "self",
+      "href": "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"
+    }
+  ]
+}
+----
+
+////
+$ curl 'http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca' -i -X GET -H 'Accept: application/ld+json'
+HTTP/1.1 200
+Content-Type: application/ld+json
+Transfer-Encoding: chunked
+Date: Wed, 23 Mar 2022 09:02:44 GMT
+
+{"id":"5f4bb924-e930-4b2d-ae1c-4bdb501752ca","title":"Go on a Treasure Hunt","completed":false,"links":[{"rel":"self","href":"http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"}]}
+////
+
 == Hydra
 
 http://www.markus-lanthaler.com/hydra/
@@ -746,7 +1166,11 @@ Complète JSON-LD
 
 == UBER
 
-IANA : `application/vnd.amundsen-uber+json`
+https://github.com/uber-hypermedia/specification/
+
+`application/vnd.amundsen-uber+json`
+
+Pas enregistré auprès de l'IANA
 
 [%notitle]
 === UBER
@@ -759,22 +1183,64 @@ IANA : `application/vnd.amundsen-uber+json`
     "data": [
       {
         "name": "self",
-        "rel": ["self", "getTodos"],
+        "rel": [
+          "self",
+          "getTodos"
+        ],
         "url": "http://localhost:8080/todos"
+      },
+      {
+        "name": "createTodo",
+        "rel": [
+          "createTodo"
+        ],
+        "url": "http://localhost:8080/todos",
+        "action": "append",
+        "model": "title={title}"
       },
       {
         "data": [
           {
             "name": "self",
-            "rel": ["self", "getTodo"],
-            "url": "http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"
+            "rel": [
+              "self",
+              "getTodo"
+            ],
+            "url": "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"
+          },
+          {
+            "name": "updateTodo",
+            "rel": [
+              "updateTodo"
+            ],
+            "url": "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca",
+            "action": "replace",
+            "model": "completed={completed}&title={title}"
+          },
+          {
+            "name": "deleteTodo",
+            "rel": [
+              "deleteTodo"
+            ],
+            "url": "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca",
+            "action": "remove",
+            "model": ""
           },
           {
             "name": "todo",
             "data": [
-              { "name": "completed", "value": false },
-              { "name": "id", "value": "5a1fed06-6e67-4c8c-8462-efca56ea3cf0" },
-              { "name": "title", "value": "Go on a Treasure Hunt" }
+              {
+                "name": "completed",
+                "value": false
+              },
+              {
+                "name": "id",
+                "value": "5f4bb924-e930-4b2d-ae1c-4bdb501752ca"
+              },
+              {
+                "name": "title",
+                "value": "Go on a Treasure Hunt"
+              }
             ]
           }
         ]
@@ -790,9 +1256,9 @@ $ curl 'http://localhost:8080/todos' -i -X GET -H 'Accept: application/vnd.amund
 HTTP/1.1 200
 Content-Type: application/vnd.amundsen-uber+json
 Transfer-Encoding: chunked
-Date: Thu, 24 Feb 2022 08:15:21 GMT
+Date: Wed, 23 Mar 2022 14:23:47 GMT
 
-{"uber":{"version":"1.0","data":[{"name":"self","rel":["self","getTodos"],"url":"http://localhost:8080/todos"},{"data":[{"name":"self","rel":["self","getTodo"],"url":"http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"},{"name":"todo","data":[{"name":"completed","value":false},{"name":"id","value":"5a1fed06-6e67-4c8c-8462-efca56ea3cf0"},{"name":"title","value":"Go on a Treasure Hunt"}]}]},{"data":[{"name":"self","rel":["self","getTodo"],"url":"http://localhost:8080/todos/724b6dc6-aa2a-4efc-be1b-1d1ab4c4b4b0"},{"name":"todo","data":[{"name":"completed","value":true},{"name":"id","value":"724b6dc6-aa2a-4efc-be1b-1d1ab4c4b4b0"},{"name":"title","value":"Pay Off Library Fee"}]}]},{"data":[{"name":"self","rel":["self","getTodo"],"url":"http://localhost:8080/todos/71f235e3-541e-42bb-8241-7323fee4225d"},{"name":"todo","data":[{"name":"completed","value":false},{"name":"id","value":"71f235e3-541e-42bb-8241-7323fee4225d"},{"name":"title","value":"Make Homemade Beer"}]}]}]}}
+{"uber":{"version":"1.0","data":[{"name":"self","rel":["self","getTodos"],"url":"http://localhost:8080/todos"},{"name":"createTodo","rel":["createTodo"],"url":"http://localhost:8080/todos","action":"append","model":"title={title}"},{"data":[{"name":"self","rel":["self","getTodo"],"url":"http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"},{"name":"updateTodo","rel":["updateTodo"],"url":"http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca","action":"replace","model":"completed={completed}&title={title}"},{"name":"deleteTodo","rel":["deleteTodo"],"url":"http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca","action":"remove","model":""},{"name":"todo","data":[{"name":"completed","value":false},{"name":"id","value":"5f4bb924-e930-4b2d-ae1c-4bdb501752ca"},{"name":"title","value":"Go on a Treasure Hunt"}]}]},{"data":[{"name":"self","rel":["self","getTodo"],"url":"http://localhost:8080/todos/76d308e2-61f3-4eda-8a59-e9dcba9cd343"},{"name":"updateTodo","rel":["updateTodo"],"url":"http://localhost:8080/todos/76d308e2-61f3-4eda-8a59-e9dcba9cd343","action":"replace","model":"completed={completed}&title={title}"},{"name":"deleteTodo","rel":["deleteTodo"],"url":"http://localhost:8080/todos/76d308e2-61f3-4eda-8a59-e9dcba9cd343","action":"remove","model":""},{"name":"todo","data":[{"name":"completed","value":true},{"name":"id","value":"76d308e2-61f3-4eda-8a59-e9dcba9cd343"},{"name":"title","value":"Pay Off Library Fee"}]}]},{"data":[{"name":"self","rel":["self","getTodo"],"url":"http://localhost:8080/todos/9f3391e2-2351-499d-b741-57006748cb0b"},{"name":"updateTodo","rel":["updateTodo"],"url":"http://localhost:8080/todos/9f3391e2-2351-499d-b741-57006748cb0b","action":"replace","model":"completed={completed}&title={title}"},{"name":"deleteTodo","rel":["deleteTodo"],"url":"http://localhost:8080/todos/9f3391e2-2351-499d-b741-57006748cb0b","action":"remove","model":""},{"name":"todo","data":[{"name":"completed","value":false},{"name":"id","value":"9f3391e2-2351-499d-b741-57006748cb0b"},{"name":"title","value":"Make Homemade Beer"}]}]}]}}
 ////
 
 [%notitle]
@@ -806,15 +1272,45 @@ Date: Thu, 24 Feb 2022 08:15:21 GMT
     "data": [
       {
         "name": "self",
-        "rel": ["self", "getTodo"],
-        "url": "http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"
+        "rel": [
+          "self",
+          "getTodo"
+        ],
+        "url": "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"
+      },
+      {
+        "name": "updateTodo",
+        "rel": [
+          "updateTodo"
+        ],
+        "url": "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca",
+        "action": "replace",
+        "model": "completed={completed}&title={title}"
+      },
+      {
+        "name": "deleteTodo",
+        "rel": [
+          "deleteTodo"
+        ],
+        "url": "http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca",
+        "action": "remove",
+        "model": ""
       },
       {
         "name": "todo",
         "data": [
-          { "name": "completed", "value": false },
-          { "name": "id", "value": "5a1fed06-6e67-4c8c-8462-efca56ea3cf0" },
-          { "name": "title", "value": "Go on a Treasure Hunt" }
+          {
+            "name": "completed",
+            "value": false
+          },
+          {
+            "name": "id",
+            "value": "5f4bb924-e930-4b2d-ae1c-4bdb501752ca"
+          },
+          {
+            "name": "title",
+            "value": "Go on a Treasure Hunt"
+          }
         ]
       }
     ]
@@ -823,13 +1319,13 @@ Date: Thu, 24 Feb 2022 08:15:21 GMT
 ----
 
 ////
-$ curl 'http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0' -i -X GET -H 'Accept: application/vnd.amundsen-uber+json'
+$ curl 'http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca' -i -X GET -H 'Accept: application/vnd.amundsen-uber+json'
 HTTP/1.1 200
 Content-Type: application/vnd.amundsen-uber+json
 Transfer-Encoding: chunked
-Date: Thu, 24 Feb 2022 08:14:33 GMT
+Date: Wed, 23 Mar 2022 14:31:08 GMT
 
-{"uber":{"version":"1.0","data":[{"name":"self","rel":["self","getTodo"],"url":"http://localhost:8080/todos/5a1fed06-6e67-4c8c-8462-efca56ea3cf0"},{"name":"todo","data":[{"name":"completed","value":false},{"name":"id","value":"5a1fed06-6e67-4c8c-8462-efca56ea3cf0"},{"name":"title","value":"Go on a Treasure Hunt"}]}]}}
+{"uber":{"version":"1.0","data":[{"name":"self","rel":["self","getTodo"],"url":"http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca"},{"name":"updateTodo","rel":["updateTodo"],"url":"http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca","action":"replace","model":"completed={completed}&title={title}"},{"name":"deleteTodo","rel":["deleteTodo"],"url":"http://localhost:8080/todos/5f4bb924-e930-4b2d-ae1c-4bdb501752ca","action":"remove","model":""},{"name":"todo","data":[{"name":"completed","value":false},{"name":"id","value":"5f4bb924-e930-4b2d-ae1c-4bdb501752ca"},{"name":"title","value":"Go on a Treasure Hunt"}]}]}}
 ////
 
 == Spring Boot Actuator

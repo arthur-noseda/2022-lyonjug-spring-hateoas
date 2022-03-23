@@ -12,3 +12,8 @@
   font-size: 50%;
   opacity: 75%;
 }
+
+.reveal pre code {
+  font-size: 70%;
+  max-height: 600px;
+}
